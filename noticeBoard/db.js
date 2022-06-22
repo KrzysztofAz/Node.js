@@ -29,18 +29,29 @@ const deleteNotice = (id) => {
 }
 
 const addNotice = (newNotice) => {
-    newNotice.createdTime = new Date();
-    return noticesCollection.insertOne(newNotice);
+    let notice ={};
+    notice.title = newNotice.title;
+    notice.description = newNotice.description;
+    notice.author = newNotice.author;
+    notice.category = newNotice.category;
+    notice.tags = newNotice.tags;
+    notice.price = newNotice.price;
+    notice.createdTime = new Date().toString();
+    return noticesCollection.insertOne(notice);
 }
 
 const updateNotice = (id, modifiedNotice) => {
     return noticesCollection.updateOne(
-        { _id: new ObjectId(id)},
-        { $set: { "title": (modifiedNotice.title), 
-                    "description": (modifiedNotice.description), 
-                    "category": (modifiedNotice.category), 
-                    "price": (modifiedNotice.price)
-                }}
+        { _id: new ObjectId(id) },
+        {
+            $set: {
+                "title": (modifiedNotice.title),
+                "description": (modifiedNotice.description),
+                "category": (modifiedNotice.category),
+                "tags": (modifiedNotice.tags),
+                "price": (modifiedNotice.price)
+            }
+        }
     );
 }
 
