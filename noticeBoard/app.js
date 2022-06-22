@@ -62,10 +62,9 @@ init()
     });
 
     app.get("/notices/:id", async (req, res) => {
+      try {
       const { id } = req.params;
       const notice = await getNotice(id);
-
-      try {
         if (notice) {
           res.send(notice);
         }
@@ -83,8 +82,14 @@ init()
     app.post("/notices", async (req, res) => {
       try {
         const newNotice = req.body;
-        if (!newNotice.title || !newNotice.description || !newNotice.author || !newNotice.tags ||
-          !newNotice.category || !newNotice.price) {
+        if (
+          !newNotice.title ||
+          !newNotice.description ||
+          !newNotice.author ||
+          !newNotice.tags ||
+          !newNotice.category ||
+          !newNotice.price
+        ) {
           res.statusCode = status.BAD_REQUEST;
           console.log("BAD_REQUEST. CODE: " + res.statusCode);
           res.send("BAD_REQUEST. CODE: " + res.statusCode);
@@ -104,10 +109,9 @@ init()
     });
 
     app.patch("/notices/:id", async (req, res) => {
-      const { id } = req.params;
-      const modifiedNotice = req.body;
-
       try {
+        const { id } = req.params;
+        const modifiedNotice = req.body;
         if (modifiedNotice == null) {
           res.statusCode = status.BAD_REQUEST;
           console.log("BAD_REQUEST. CODE: " + res.statusCode);
@@ -137,10 +141,9 @@ init()
     });
 
     app.delete("/notices/:id", async (req, res) => {
-      const { id } = req.params;
-      const result = await deleteNotice(id);
-
       try {
+        const { id } = req.params;
+        const result = await deleteNotice(id);
         if (result.deletedCount == 1) {
           res.statusCode = status.NO_CONTENT;
           console.log("NOTICE_DELETED. " + res.statusCode);
@@ -156,12 +159,15 @@ init()
         res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
+    
+    app.get('/heartbeat', (req, res) => {
+      res.send(new Date().toString());
   })
-
+})
   .finally(() => {
-    app.get("/heartbeat", (req, res) => {
-      res.send(new Date());
-    });
-
-    app.listen(process.env.PORT, () => console.log(`server started`));
-  });
+      app.all('*', (req, res) => {
+          res.statusCode = status.NOT_FOUND;
+          res.sendFile(__dirname + '/404.jpg')
+      })
+      app.listen(process.env.PORT, () => console.log('server started'));
+  })
