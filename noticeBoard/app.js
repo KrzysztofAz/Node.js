@@ -65,72 +65,99 @@ init()
       const { id } = req.params;
       const notice = await getNotice(id);
 
-      if (notice) {
-        res.send(notice);
-      }
+      try {
+        if (notice) {
+          res.send(notice);
+        }
 
-      res.statusCode = status.NOT_FOUND;
-      console.log("NOT_FOUND. CODE: " + res.statusCode);
-      res.send("NOT_FOUND. CODE: " + res.statusCode);
+        res.statusCode = status.NOT_FOUND;
+        console.log("NOT_FOUND. CODE: " + res.statusCode);
+        res.send("NOT_FOUND. CODE: " + res.statusCode);
+      } catch (error) {
+        res.statusCode = status.INTERNAL_SERVER_ERROR;
+        console.log("INTERNAL_SERVER_ERROR. CODE: " + error);
+        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+      }
     });
 
     app.post("/notices", async (req, res) => {
       try {
         const newNotice = req.body;
-        if (!newNotice.title) {
-            res.statusCode = status.BAD_REQUEST;
-            console.log("BAD_REQUEST. CODE: " + res.statusCode);
-            res.send("BAD_REQUEST. CODE: " + res.statusCode);
+        if (!newNotice.title || !newNotice.description || !newNotice.author || !newNotice.tags ||
+          !newNotice.category || !newNotice.price) {
+          res.statusCode = status.BAD_REQUEST;
+          console.log("BAD_REQUEST. CODE: " + res.statusCode);
+          res.send("BAD_REQUEST. CODE: " + res.statusCode);
         } else {
-            const result = await addNotice(newNotice);
-            if (result.insertedCount === 1) {
-                res.statusCode = status.CREATED;
-                res.send("CREATED_NOTICE. CODE: " + res.statusCode);
-            };
-        };
-    } catch (error) {
+          const result = await addNotice(newNotice);
+          if (result.insertedCount === 1) {
+            res.statusCode = status.CREATED;
+            console.log("CREATED_NOTICE. CODE: " + res.statusCode);
+            res.send("CREATED_NOTICE. CODE: " + res.statusCode);
+          }
+        }
+      } catch (error) {
         res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log(new Date() + " " + error);
-        res.send("INTERNAL_SERVER_ERROR. Error: " + res.statusCode);
-    };
-});
+        console.log("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+      }
+    });
 
     app.patch("/notices/:id", async (req, res) => {
       const { id } = req.params;
       const modifiedNotice = req.body;
 
-      if (modifiedNotice == null) {
-        res.statusCode = status.BAD_REQUEST;
-      } else {
-        const result = await updateNotice(id, modifiedNotice);
-
-        if (result.modifiedCount === 1) {
-          res.statusCode = status.NO_CONTENT;
-        } else if (result.matchedCount === 1) {
-          res.statusCode = status.CONFLICT;
+      try {
+        if (modifiedNotice == null) {
+          res.statusCode = status.BAD_REQUEST;
+          console.log("BAD_REQUEST. CODE: " + res.statusCode);
+          res.send("BAD_REQUEST. CODE: " + res.statusCode);
         } else {
-          res.statusCode = status.NOT_FOUND;
-        }
-      }
+          const result = await updateNotice(id, modifiedNotice);
 
-      res.send();
+          if (result.modifiedCount === 1) {
+            res.statusCode = status.NO_CONTENT;
+            console.log("NOTICE_MODIFIED. CODE: " + res.statusCode);
+            res.send("NOTICE_MODIFIED: " + res.statusCode);
+          } else if (result.matchedCount === 1) {
+            res.statusCode = status.CONFLICT;
+            console.log("NOTHING_TO_UPDATE. " + res.statusCode);
+            res.send("NOTHING_TO_UPDATE. " + res.statusCode);
+          } else {
+            res.statusCode = status.NOT_FOUND;
+            console.log("NOT_FOUND. " + res.statusCode);
+            res.send("NOT_FOUND. " + res.statusCode);
+          }
+        }
+      } catch (error) {
+        res.statusCode = status.INTERNAL_SERVER_ERROR;
+        console.log("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+      }
     });
 
     app.delete("/notices/:id", async (req, res) => {
       const { id } = req.params;
       const result = await deleteNotice(id);
 
-      if (result.deletedCount == 1) {
-        res.statusCode = status.NO_CONTENT;
-        console.log("NOTICE_DELETED. " + res.statusCode);
-        res.send("NOTICE_DELETED. " + res.statusCode);
-      } else {
-        res.statusCode = status.NOT_FOUND;
-        console.log("NOT_FOUND. " + res.statusCode);
-        res.send("NOT_FOUND. " + res.statusCode);
+      try {
+        if (result.deletedCount == 1) {
+          res.statusCode = status.NO_CONTENT;
+          console.log("NOTICE_DELETED. " + res.statusCode);
+          res.send("NOTICE_DELETED. " + res.statusCode);
+        } else {
+          res.statusCode = status.NOT_FOUND;
+          console.log("NOT_FOUND. " + res.statusCode);
+          res.send("NOT_FOUND. " + res.statusCode);
+        }
+      } catch (error) {
+        res.statusCode = status.INTERNAL_SERVER_ERROR;
+        console.log("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
   })
+
   .finally(() => {
     app.get("/heartbeat", (req, res) => {
       res.send(new Date());
