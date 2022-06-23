@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const status = require("http-status");
 const app = express();
+const fs = require("fs");
 
 const {
   init,
@@ -23,6 +24,10 @@ init()
           notices = notices.filter(
             (notice) => notice.author == req.query.author
           );
+        } else if (req.query.description) {
+          notices = notices.filter((notice) =>
+            notice.description.includes(req.query.description)
+          );
         } else if (req.query.title) {
           notices = notices.filter((notice) =>
             notice.title.includes(req.query.title)
@@ -34,16 +39,15 @@ init()
         } else if (req.query.minprice && req.query.maxprice) {
           notices = notices.filter(
             (notice) =>
-              (notice.price >= req.query.minprice) &
-              (notice.price <= req.query.maxprice)
+              (notice.price * 1 >= req.query.minprice) &
+              (notice.price * 1 <= req.query.maxprice)
           );
         } else if (req.query.minyear && req.query.maxyear) {
           notices = notices.filter(
-            (ad) =>
-              (parseInt(ad.createdTime.toString().substr(11, 4)) >=
+            (notice) =>
+              (notice.createdTime.toString().substr(11, 4) >=
                 req.query.minyear) &
-              (parseInt(ad.createdTime.toString().substr(11, 4)) <=
-                req.query.maxyear)
+              (notice.createdTime.toString().substr(11, 4) <= req.query.maxyear)
           );
         }
         if (notices.length === 0) {
@@ -52,19 +56,20 @@ init()
           res.send("NO_CONTENT. CODE: " + res.statusCode);
         } else {
           res.statusCode = status.OK;
+          console.log("STATUS_OK: " + res.statusCode);
           res.send(notices);
         }
       } catch (error) {
         res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("INTERNAL_SERVER_ERROR. CODE: " + error);
+        console.log("ERROR: " + error);
         res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
 
     app.get("/notices/:id", async (req, res) => {
       try {
-      const { id } = req.params;
-      const notice = await getNotice(id);
+        const { id } = req.params;
+        const notice = await getNotice(id);
         if (notice) {
           res.send(notice);
         }
@@ -74,7 +79,7 @@ init()
         res.send("NOT_FOUND. CODE: " + res.statusCode);
       } catch (error) {
         res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("INTERNAL_SERVER_ERROR. CODE: " + error);
+        console.log("ERROR: " + error);
         res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
@@ -103,7 +108,7 @@ init()
         }
       } catch (error) {
         res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        console.log("ERROR: " + error);
         res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
@@ -135,7 +140,7 @@ init()
         }
       } catch (error) {
         res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        console.log("ERROR: " + error);
         res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
@@ -146,8 +151,8 @@ init()
         const result = await deleteNotice(id);
         if (result.deletedCount == 1) {
           res.statusCode = status.NO_CONTENT;
-          console.log("NOTICE_DELETED. " + res.statusCode);
-          res.send("NOTICE_DELETED. " + res.statusCode);
+          console.log("NOTICE_DELETED: " + res.statusCode);
+          res.send("NOTICE_DELETED: " + res.statusCode);
         } else {
           res.statusCode = status.NOT_FOUND;
           console.log("NOT_FOUND. " + res.statusCode);
@@ -155,19 +160,19 @@ init()
         }
       } catch (error) {
         res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        console.log("ERROR: " + error);
         res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
       }
     });
-    
-    app.get('/heartbeat', (req, res) => {
+
+    app.get("/heartbeat", (req, res) => {
       res.send(new Date().toString());
+    });
   })
-})
   .finally(() => {
-      app.all('*', (req, res) => {
-          res.statusCode = status.NOT_FOUND;
-          res.sendFile(__dirname + '/404.jpg')
-      })
-      app.listen(process.env.PORT, () => console.log('server started'));
-  })
+    app.all("*", (req, res) => {
+      res.statusCode = status.NOT_FOUND;
+      res.sendFile(__dirname + "/404.jpg");
+    });
+    app.listen(process.env.PORT, () => console.log("server started"));
+  });
