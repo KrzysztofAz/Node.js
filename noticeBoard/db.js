@@ -36,8 +36,8 @@ const addNotice = (newNotice) => {
     notice.category = newNotice.category;
     notice.tags = newNotice.tags;
     notice.price = newNotice.price;
-    notice.phone = newNotice.phone;
     notice.city = newNotice.city;
+    notice.voivodeship = newNotice.voivodeship;
     notice.createdTime = new Date().toString();
     return noticesCollection.insertOne(notice);
 }
@@ -51,7 +51,9 @@ const updateNotice = (id, modifiedNotice) => {
                 "description": (modifiedNotice.description),
                 "category": (modifiedNotice.category),
                 "tags": (modifiedNotice.tags),
-                "price": (modifiedNotice.price)
+                "price": (modifiedNotice.price),
+                "city": (modifiedNotice.city),
+                "voivodeship": (modifiedNotice.voivodeship)
             }
         }
     );

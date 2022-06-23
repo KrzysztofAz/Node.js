@@ -45,13 +45,17 @@ init()
           notices = notices.filter(
             (notice) => notice.author == req.query.author
           );
-        } else if (req.query.description) {
-          notices = notices.filter((notice) =>
-            notice.description.includes(req.query.description)
-          );
         } else if (req.query.title) {
           notices = notices.filter((notice) =>
             notice.title.includes(req.query.title)
+          );
+        } else if (req.query.category) {
+          notices = notices.filter((notice) =>
+            notice.category.includes(req.query.category)
+          );
+        } else if (req.query.category) {
+          notices = notices.filter((notice) =>
+            notice.category.includes(req.query.category)
           );
         } else if (req.query.tags) {
           notices = notices.filter((notice) =>
@@ -72,12 +76,12 @@ init()
           );
         }
         if (notices.length === 0) {
-          res.statusCode = status.NO_CONTENT;
-          console.log("NO_CONTENT. CODE: " + res.statusCode);
-          res.send("NO_CONTENT. CODE: " + res.statusCode);
+          res.statusCode = status.NOT_FOUND;
+          console.log("NOT_FOUND_NOTICES: " + res.statusCode);
+          res.send("NOT_FOUND_NOTICES. CODE: " + res.statusCode);
         } else {
           res.statusCode = status.OK;
-          console.log("STATUS_OK: " + res.statusCode);
+          console.log("GETTED_NOTICES. CODE: " + res.statusCode);
           res.send(notices);
         }
       } catch (error) {
@@ -92,16 +96,14 @@ init()
         const { id } = req.params;
         const notice = await getNotice(id);
         if (notice) {
+          res.statusCode = status.OK;
+          console.log("GETTED_NOTICE. CODE: " + res.statusCode);
           res.send(notice);
         }
-
-        res.statusCode = status.NOT_FOUND;
-        console.log("NOT_FOUND. CODE: " + res.statusCode);
-        res.send("NOT_FOUND. CODE: " + res.statusCode);
       } catch (error) {
-        res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("ERROR: " + error);
-        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        res.statusCode = status.NOT_FOUND;
+        console.log("NOT_FOUND_NOTICE. CODE: " + res.statusCode);
+        res.send("NOT_FOUND_NOTICE. CODE: " + res.statusCode);
       }
     });
 
@@ -115,8 +117,8 @@ init()
           !newNotice.tags ||
           !newNotice.category ||
           !newNotice.price ||
-          !newNotice.phone ||
-          !newNotice.city
+          !newNotice.city ||
+          !newNotice.voivodeship
         ) {
           res.statusCode = status.BAD_REQUEST;
           console.log("BAD_REQUEST. CODE: " + res.statusCode);
@@ -148,23 +150,19 @@ init()
           const result = await updateNotice(id, modifiedNotice);
 
           if (result.modifiedCount === 1) {
-            res.statusCode = status.NO_CONTENT;
+            res.statusCode = status.OK;
             console.log("NOTICE_MODIFIED. CODE: " + res.statusCode);
             res.send("NOTICE_MODIFIED: " + res.statusCode);
           } else if (result.matchedCount === 1) {
             res.statusCode = status.CONFLICT;
             console.log("NOTHING_TO_UPDATE. " + res.statusCode);
             res.send("NOTHING_TO_UPDATE. " + res.statusCode);
-          } else {
-            res.statusCode = status.NOT_FOUND;
-            console.log("NOT_FOUND. " + res.statusCode);
-            res.send("NOT_FOUND. " + res.statusCode);
           }
         }
       } catch (error) {
-        res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("ERROR: " + error);
-        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        res.statusCode = status.NOT_FOUND;
+        console.log("NOT_FOUND_NOTICE. " + res.statusCode);
+        res.send("NOT_FOUND_NOTICE. " + res.statusCode);
       }
     });
 
@@ -173,18 +171,14 @@ init()
         const { id } = req.params;
         const result = await deleteNotice(id);
         if (result.deletedCount == 1) {
-          res.statusCode = status.NO_CONTENT;
+          res.statusCode = status.OK;
           console.log("NOTICE_DELETED: " + res.statusCode);
           res.send("NOTICE_DELETED: " + res.statusCode);
-        } else {
-          res.statusCode = status.NOT_FOUND;
-          console.log("NOT_FOUND. " + res.statusCode);
-          res.send("NOT_FOUND. " + res.statusCode);
         }
       } catch (error) {
-        res.statusCode = status.INTERNAL_SERVER_ERROR;
-        console.log("ERROR: " + error);
-        res.send("INTERNAL_SERVER_ERROR. CODE: " + res.statusCode);
+        res.statusCode = status.NOT_FOUND;
+        console.log("NOT_FOUND_NOTICE. " + res.statusCode);
+        res.send("NOT_FOUND_NOTICE. " + res.statusCode);
       }
     });
 
