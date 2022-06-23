@@ -13,7 +13,28 @@ const {
   updateNotice,
 } = require("./db");
 
-app.use(express.json());
+let isDebug;
+if (process.argv[2] == "debug") {
+  isDebug = true;
+} else {
+  isDebug = false;
+}
+const saveTasks = (req, res, next) => {
+  if (isDebug) {
+    const data = new Date() + " " + req.method + " " + req.path;
+    const file = "debug.txt";
+    fs.appendFile(file, data + "\n", "utf8", (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+    next();
+  } else {
+    next();
+  }
+};
+
+app.use(express.json(), saveTasks);
 
 init()
   .then(() => {
@@ -93,7 +114,9 @@ init()
           !newNotice.author ||
           !newNotice.tags ||
           !newNotice.category ||
-          !newNotice.price
+          !newNotice.price ||
+          !newNotice.phone ||
+          !newNotice.city
         ) {
           res.statusCode = status.BAD_REQUEST;
           console.log("BAD_REQUEST. CODE: " + res.statusCode);

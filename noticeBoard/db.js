@@ -36,6 +36,8 @@ const addNotice = (newNotice) => {
     notice.category = newNotice.category;
     notice.tags = newNotice.tags;
     notice.price = newNotice.price;
+    notice.phone = newNotice.phone;
+    notice.city = newNotice.city;
     notice.createdTime = new Date().toString();
     return noticesCollection.insertOne(notice);
 }
