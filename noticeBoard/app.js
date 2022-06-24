@@ -53,11 +53,7 @@ init()
           notices = notices.filter((notice) =>
             notice.category.includes(req.query.category)
           );
-        } else if (req.query.category) {
-          notices = notices.filter((notice) =>
-            notice.category.includes(req.query.category)
-          );
-        }  else if (req.query.tags) {
+        } else if (req.query.tags) {
           notices = notices.filter((notice) =>
             notice.tags.includes(req.query.tags)
           );

@@ -49,6 +49,7 @@ const updateNotice = (id, modifiedNotice) => {
             $set: {
                 "title": (modifiedNotice.title),
                 "description": (modifiedNotice.description),
+                "author": (modifiedNotice.description),
                 "category": (modifiedNotice.category),
                 "tags": (modifiedNotice.tags),
                 "price": (modifiedNotice.price),
