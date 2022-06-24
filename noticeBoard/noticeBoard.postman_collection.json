@@ -86,13 +86,13 @@
 			"response": []
 		},
 		{
-			"name": "post notice",
+			"name": "add notice",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"Sprzedam rower Romet\",\r\n    \"description\": \"XYZ\",\r\n    \"author\": \"Jan Nowak\",\r\n    \"tags\": \"szybka jazda\",\r\n    \"category\": \"Rowery\",\r\n    \"price\": \"900\"\r\n}",
+					"raw": "{\r\n    \"title\": \"Wynajme dom\",\r\n    \"description\": \"4 pokoje\",\r\n    \"author\": \"adam\",\r\n    \"tags\": \"przytulne\",\r\n    \"category\": \"nieruchomosci\",\r\n    \"price\": 4000\r\n   \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -267,7 +267,7 @@
 			"response": []
 		},
 		{
-			"name": "filter description",
+			"name": "filter year",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -284,6 +284,130 @@
 						{
 							"key": "description",
 							"value": "XYZ"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter price",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:{{port}}/notices?minprice=10000&maxprice=10000",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"notices"
+					],
+					"query": [
+						{
+							"key": "minprice",
+							"value": "10000"
+						},
+						{
+							"key": "maxprice",
+							"value": "10000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:{{port}}/notices?category=fgghfg",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"notices"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "fgghfg"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:{{port}}/notices?tags=cieply",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"notices"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "cieply"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter city",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:{{port}}/notices?city=bialystok",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"notices"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "bialystok"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter city",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:{{port}}/notices?city=bialystok",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"notices"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "bialystok"
 						}
 					]
 				}
