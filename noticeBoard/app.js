@@ -57,9 +57,13 @@ init()
           notices = notices.filter((notice) =>
             notice.category.includes(req.query.category)
           );
-        } else if (req.query.tags) {
+        }  else if (req.query.tags) {
           notices = notices.filter((notice) =>
             notice.tags.includes(req.query.tags)
+          );
+        } else if (req.query.city) {
+          notices = notices.filter((notice) =>
+            notice.city.includes(req.query.city)
           );
         } else if (req.query.minprice && req.query.maxprice) {
           notices = notices.filter(
@@ -102,9 +106,11 @@ init()
         }
       } catch (error) {
         res.statusCode = status.NOT_FOUND;
-        console.log("NOT_FOUND_NOTICE. CODE: " + res.statusCode);
-        res.send("NOT_FOUND_NOTICE. CODE: " + res.statusCode);
+        console.log("NOT_FOUND_NOTICE. CODE: " + res.statusCode + " " + error);
+        res.send("NOT_FOUND_NOTICE. " + res.statusCode);
       }
+      res.statusCode = status.NOT_FOUND;
+      res.send();
     });
 
     app.post("/notices", async (req, res) => {
@@ -161,9 +167,11 @@ init()
         }
       } catch (error) {
         res.statusCode = status.NOT_FOUND;
-        console.log("NOT_FOUND_NOTICE. " + res.statusCode);
+        console.log("NOT_FOUND_NOTICE. CODE: " + res.statusCode + " " + error);
         res.send("NOT_FOUND_NOTICE. " + res.statusCode);
       }
+      res.statusCode = status.NOT_FOUND;
+      res.send();
     });
 
     app.delete("/notices/:id", async (req, res) => {
@@ -177,9 +185,11 @@ init()
         }
       } catch (error) {
         res.statusCode = status.NOT_FOUND;
-        console.log("NOT_FOUND_NOTICE. " + res.statusCode);
-        res.send("NOT_FOUND_NOTICE. " + res.statusCode);
+        console.log("NOT_FOUND_NOTICE. CODE: " + res.statusCode + " " + error);
+        res.send("NOT_FOUND_NOTICE. CODE: " + res.statusCode);
       }
+      res.statusCode = status.NOT_FOUND;
+      res.send();
     });
 
     app.get("/heartbeat", (req, res) => {
